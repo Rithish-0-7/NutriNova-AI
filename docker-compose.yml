@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: nutrinova-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: nutrinova-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: nutrinova-api
+    environment:
+      PORT: 4000
+      MONGODB_URI: mongodb://mongodb:27017/nutrinova
+      REDIS_URL: redis://redis:6379
+      AI_ENGINE_URL: http://ai:8001
+      JWT_ACCESS_SECRET: replace_me
+      JWT_REFRESH_SECRET: replace_me
+    depends_on:
+      - mongodb
+      - redis
+      - ai
+    ports:
+      - "4000:4000"
+
+  ai:
+    build:
+      context: ./apps/ai
+      dockerfile: Dockerfile
+    container_name: nutrinova-ai
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    ports:
+      - "8001:8001"
+
+volumes:
+  mongo_data:
