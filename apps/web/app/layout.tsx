@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { TopNav } from '@/components/TopNav';
+import { AppShell } from '@/components/layout/AppShell';
 
 export const metadata: Metadata = {
   title: 'NutriNova AI',
@@ -9,10 +9,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <TopNav />
-        <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+    <html lang="en" className="dark">
+      <body className="min-h-screen">
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
